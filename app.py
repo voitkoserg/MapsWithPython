@@ -22,47 +22,45 @@ def filter_data(group1, subgroup2, department1, department2):
     filtered_data = sales_data.copy()
 
     # Применение фильтров с учетом множественного выбора
-    if 'Все' not in group1:
+    if group1:
         filtered_data = filtered_data[filtered_data['Группа (вид1)'].isin(group1)]
-    if 'Все' not in subgroup2:
+    if subgroup2:
         filtered_data = filtered_data[filtered_data['Подгруппа (вид2)'].isin(subgroup2)]
-    if 'Все' not in department1:
+    if department1:
         filtered_data = filtered_data[filtered_data['Подразделение1'].isin(department1)]
-    if 'Все' not in department2:
+    if department2:
         filtered_data = filtered_data[filtered_data['Подразделение2'].isin(department2)]
 
     return filtered_data.groupby('Район', as_index=False)['Выручка'].sum()
 
-# Функция для удаления "Все" из выбранных элементов
-def handle_filter_selection(selected_items):
-    # Если выбран хотя бы один элемент кроме "Все", убираем "Все" из выбранных
+# Функция для получения выбранных элементов с удалением "Все"
+def get_selected_items(selected_items):
     if 'Все' in selected_items and len(selected_items) > 1:
         selected_items.remove('Все')
     return selected_items
-
-# Функция для создания и обработки множественного выбора с логикой удаления "Все"
-def custom_multiselect(label, options, default):
-    selected_items = st.sidebar.multiselect(label, options, default=default)
-    return handle_filter_selection(selected_items)
 
 # Интерфейс фильтров с множественным выбором
 st.sidebar.header('Фильтры')
 
 # Группа (вид1)
 group1_options = ['Все'] + sales_data['Группа (вид1)'].unique().tolist()
-group1_selected = custom_multiselect('Группа (вид1)', group1_options, default=['Все'])
+group1_selected = st.sidebar.multiselect('Группа (вид1)', group1_options, default=['Все'])
+group1_selected = get_selected_items(group1_selected)
 
 # Подгруппа (вид2)
 subgroup2_options = ['Все'] + sales_data['Подгруппа (вид2)'].unique().tolist()
-subgroup2_selected = custom_multiselect('Подгруппа (вид2)', subgroup2_options, default=['Все'])
+subgroup2_selected = st.sidebar.multiselect('Подгруппа (вид2)', subgroup2_options, default=['Все'])
+subgroup2_selected = get_selected_items(subgroup2_selected)
 
 # Подразделение1
 department1_options = ['Все'] + sales_data['Подразделение1'].unique().tolist()
-department1_selected = custom_multiselect('Подразделение1', department1_options, default=['Все'])
+department1_selected = st.sidebar.multiselect('Подразделение1', department1_options, default=['Все'])
+department1_selected = get_selected_items(department1_selected)
 
 # Подразделение2
 department2_options = ['Все'] + sales_data['Подразделение2'].unique().tolist()
-department2_selected = custom_multiselect('Подразделение2', department2_options, default=['Все'])
+department2_selected = st.sidebar.multiselect('Подразделение2', department2_options, default=['Все'])
+department2_selected = get_selected_items(department2_selected)
 
 # Кнопка для запуска формирования карты
 if st.sidebar.button("Сформировать карту"):
