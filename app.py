@@ -52,31 +52,15 @@ department1_selected = st.sidebar.multiselect('Подразделение1', opt
 department2_options = sales_data['Подразделение2'].unique().tolist()
 department2_selected = st.sidebar.multiselect('Подразделение2', options=['Все'] + department2_options, default=['Все'], key='department2')
 
-# Убираем "Все" из выбранных, если выпадающий список был раскрыт
-if st.session_state.get('group1_expanded', False):
-    group1_selected = [item for item in group1_selected if item != 'Все']
-if st.session_state.get('subgroup2_expanded', False):
-    subgroup2_selected = [item for item in subgroup2_selected if item != 'Все']
-if st.session_state.get('department1_expanded', False):
-    department1_selected = [item for item in department1_selected if item != 'Все']
-if st.session_state.get('department2_expanded', False):
-    department2_selected = [item for item in department2_selected if item != 'Все']
-
-# Триггеры для отслеживания раскрытия списков
-def on_expand(group):
-    st.session_state[f'{group}_expanded'] = True
-
-st.sidebar.markdown("### Список элементов фильтра")
-
-# Создание триггеров для отслеживания раскрытия списков
-if st.sidebar.button('Развернуть группу (вид1)'):
-    on_expand('group1')
-if st.sidebar.button('Развернуть подгруппу (вид2)'):
-    on_expand('subgroup2')
-if st.sidebar.button('Развернуть подразделение1'):
-    on_expand('department1')
-if st.sidebar.button('Развернуть подразделение2'):
-    on_expand('department2')
+# Убираем "Все" из выбранных, если хотя бы один элемент выбран
+if len(group1_selected) > 1:
+    group1_selected.remove('Все')
+if len(subgroup2_selected) > 1:
+    subgroup2_selected.remove('Все')
+if len(department1_selected) > 1:
+    department1_selected.remove('Все')
+if len(department2_selected) > 1:
+    department2_selected.remove('Все')
 
 # Кнопка для запуска формирования карты
 if st.sidebar.button("Сформировать карту"):
