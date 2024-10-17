@@ -33,7 +33,7 @@ def filter_data(group1, subgroup2, department1, department2):
 
     return filtered_data.groupby('Район', as_index=False)['Выручка'].sum()
 
-# Функция для обработки фильтров с исключением "Все"
+# Функция для удаления "Все" из списка выбранных элементов
 def handle_filter_selection(selected_items):
     if 'Все' in selected_items and len(selected_items) > 1:
         selected_items.remove('Все')
