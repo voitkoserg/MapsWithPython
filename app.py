@@ -38,29 +38,29 @@ st.sidebar.header('Фильтры')
 
 # Группа (вид1)
 group1_options = sales_data['Группа (вид1)'].unique().tolist()
-group1_selected = st.sidebar.multiselect('Группа (вид1)', options=['Все'] + group1_options, default=['Все'], key='group1')
+group1_selected = st.sidebar.multiselect('Группа (вид1)', options=group1_options, default=[], key='group1')
 
 # Подгруппа (вид2)
 subgroup2_options = sales_data['Подгруппа (вид2)'].unique().tolist()
-subgroup2_selected = st.sidebar.multiselect('Подгруппа (вид2)', options=['Все'] + subgroup2_options, default=['Все'], key='subgroup2')
+subgroup2_selected = st.sidebar.multiselect('Подгруппа (вид2)', options=subgroup2_options, default=[], key='subgroup2')
 
 # Подразделение1
 department1_options = sales_data['Подразделение1'].unique().tolist()
-department1_selected = st.sidebar.multiselect('Подразделение1', options=['Все'] + department1_options, default=['Все'], key='department1')
+department1_selected = st.sidebar.multiselect('Подразделение1', options=department1_options, default=[], key='department1')
 
 # Подразделение2
 department2_options = sales_data['Подразделение2'].unique().tolist()
-department2_selected = st.sidebar.multiselect('Подразделение2', options=['Все'] + department2_options, default=['Все'], key='department2')
+department2_selected = st.sidebar.multiselect('Подразделение2', options=department2_options, default=[], key='department2')
 
 # Убираем "Все" из выбранных, если хотя бы один элемент выбран
-if len(group1_selected) > 1:
-    group1_selected.remove('Все')
-if len(subgroup2_selected) > 1:
-    subgroup2_selected.remove('Все')
-if len(department1_selected) > 1:
-    department1_selected.remove('Все')
-if len(department2_selected) > 1:
-    department2_selected.remove('Все')
+if len(group1_selected) > 0:
+    group1_selected = [elem for elem in group1_selected if elem != 'Все']
+if len(subgroup2_selected) > 0:
+    subgroup2_selected = [elem for elem in subgroup2_selected if elem != 'Все']
+if len(department1_selected) > 0:
+    department1_selected = [elem for elem in department1_selected if elem != 'Все']
+if len(department2_selected) > 0:
+    department2_selected = [elem for elem in department2_selected if elem != 'Все']
 
 # Кнопка для запуска формирования карты
 if st.sidebar.button("Сформировать карту"):
