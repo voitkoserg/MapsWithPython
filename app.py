@@ -37,30 +37,46 @@ def filter_data(group1, subgroup2, department1, department2):
 st.sidebar.header('Фильтры')
 
 # Группа (вид1)
-group1_options = ['Все'] + sales_data['Группа (вид1)'].unique().tolist()
-group1_selected = st.sidebar.multiselect('Группа (вид1)', group1_options, default=['Все'])
+group1_options = sales_data['Группа (вид1)'].unique().tolist()
+group1_selected = st.sidebar.multiselect('Группа (вид1)', options=['Все'] + group1_options, default=['Все'], key='group1')
 
 # Подгруппа (вид2)
-subgroup2_options = ['Все'] + sales_data['Подгруппа (вид2)'].unique().tolist()
-subgroup2_selected = st.sidebar.multiselect('Подгруппа (вид2)', subgroup2_options, default=['Все'])
+subgroup2_options = sales_data['Подгруппа (вид2)'].unique().tolist()
+subgroup2_selected = st.sidebar.multiselect('Подгруппа (вид2)', options=['Все'] + subgroup2_options, default=['Все'], key='subgroup2')
 
 # Подразделение1
-department1_options = ['Все'] + sales_data['Подразделение1'].unique().tolist()
-department1_selected = st.sidebar.multiselect('Подразделение1', department1_options, default=['Все'])
+department1_options = sales_data['Подразделение1'].unique().tolist()
+department1_selected = st.sidebar.multiselect('Подразделение1', options=['Все'] + department1_options, default=['Все'], key='department1')
 
 # Подразделение2
-department2_options = ['Все'] + sales_data['Подразделение2'].unique().tolist()
-department2_selected = st.sidebar.multiselect('Подразделение2', department2_options, default=['Все'])
+department2_options = sales_data['Подразделение2'].unique().tolist()
+department2_selected = st.sidebar.multiselect('Подразделение2', options=['Все'] + department2_options, default=['Все'], key='department2')
 
-# Убираем "Все" из выбранных, если выбран хотя бы один элемент
-if len(group1_selected) > 1 and 'Все' in group1_selected:
-    group1_selected.remove('Все')
-if len(subgroup2_selected) > 1 and 'Все' in subgroup2_selected:
-    subgroup2_selected.remove('Все')
-if len(department1_selected) > 1 and 'Все' in department1_selected:
-    department1_selected.remove('Все')
-if len(department2_selected) > 1 and 'Все' in department2_selected:
-    department2_selected.remove('Все')
+# Убираем "Все" из выбранных, если выпадающий список был раскрыт
+if st.session_state.get('group1_expanded', False):
+    group1_selected = [item for item in group1_selected if item != 'Все']
+if st.session_state.get('subgroup2_expanded', False):
+    subgroup2_selected = [item for item in subgroup2_selected if item != 'Все']
+if st.session_state.get('department1_expanded', False):
+    department1_selected = [item for item in department1_selected if item != 'Все']
+if st.session_state.get('department2_expanded', False):
+    department2_selected = [item for item in department2_selected if item != 'Все']
+
+# Триггеры для отслеживания раскрытия списков
+def on_expand(group):
+    st.session_state[f'{group}_expanded'] = True
+
+st.sidebar.markdown("### Список элементов фильтра")
+
+# Создание триггеров для отслеживания раскрытия списков
+if st.sidebar.button('Развернуть группу (вид1)'):
+    on_expand('group1')
+if st.sidebar.button('Развернуть подгруппу (вид2)'):
+    on_expand('subgroup2')
+if st.sidebar.button('Развернуть подразделение1'):
+    on_expand('department1')
+if st.sidebar.button('Развернуть подразделение2'):
+    on_expand('department2')
 
 # Кнопка для запуска формирования карты
 if st.sidebar.button("Сформировать карту"):
