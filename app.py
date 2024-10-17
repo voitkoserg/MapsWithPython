@@ -5,7 +5,6 @@ from shapely import wkt
 import branca.colormap as cm
 import ipywidgets as widgets
 from IPython.display import display
-from google.colab import files
 
 # Шаг 1: Загрузка данных
 sales_data = pd.read_excel('ПродажиИюньДляКарт_Абс.xlsx')
