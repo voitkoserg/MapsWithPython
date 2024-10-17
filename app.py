@@ -97,8 +97,12 @@ if st.sidebar.button("Сформировать карту"):
         # Добавление цветовой шкалы
         colormap.add_to(m)
 
+        # Отображение фильтров над картой
+        filter_info = f"Примененные фильтры: Группа (вид1): {', '.join(group1_selected) if group1_selected else 'Все'}, Подгруппа (вид2): {', '.join(subgroup2_selected) if subgroup2_selected else 'Все'}, Подразделение1: {', '.join(department1_selected) if department1_selected else 'Все'}, Подразделение2: {', '.join(department2_selected) if department2_selected else 'Все'}"
+        st.markdown(f"<div style='font-size: 10pt; color: black;'>{filter_info}</div>", unsafe_allow_html=True)
+
         # Отображение карты
-        st.components.v1.html(m._repr_html_(), height=1200)  # Увеличен размер карты
+        st.components.v1.html(m._repr_html_(), height=1400)  # Увеличен размер карты
 
     except Exception as e:
         st.error(f"Произошла ошибка: {e}")
