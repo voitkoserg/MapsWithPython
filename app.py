@@ -52,6 +52,28 @@ department1_selected = st.sidebar.multiselect('Подразделение1', opt
 department2_options = ['Все'] + sales_data['Подразделение2'].unique().tolist()
 department2_selected = st.sidebar.multiselect('Подразделение2', options=department2_options, default=[], key='department2')
 
+# Отображение выбранных фильтров
+st.sidebar.markdown("### Выбранные фильтры:")
+if group1_selected:
+    st.sidebar.write("Группа (вид1):", ', '.join(group1_selected))
+else:
+    st.sidebar.write("Группа (вид1): Все")
+
+if subgroup2_selected:
+    st.sidebar.write("Подгруппа (вид2):", ', '.join(subgroup2_selected))
+else:
+    st.sidebar.write("Подгруппа (вид2): Все")
+
+if department1_selected:
+    st.sidebar.write("Подразделение1:", ', '.join(department1_selected))
+else:
+    st.sidebar.write("Подразделение1: Все")
+
+if department2_selected:
+    st.sidebar.write("Подразделение2:", ', '.join(department2_selected))
+else:
+    st.sidebar.write("Подразделение2: Все")
+
 # Кнопка для запуска формирования карты
 if st.sidebar.button("Сформировать карту"):
     try:
@@ -98,7 +120,7 @@ if st.sidebar.button("Сформировать карту"):
         colormap.add_to(m)
 
         # Отображение карты
-        st.components.v1.html(m._repr_html_(), height=1200)  # Увеличен размер карты
+        st.components.v1.html(m._repr_html_(), height=1400)  # Увеличен размер карты
 
     except Exception as e:
         st.error(f"Произошла ошибка: {e}")
