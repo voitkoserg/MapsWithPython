@@ -37,7 +37,7 @@ def filter_data(group1, subgroup2, department1, department2):
 def handle_filter_selection(selected_items):
     # Если выбрано "Все" и еще хотя бы один элемент, то удаляем "Все"
     if 'Все' in selected_items and len(selected_items) > 1:
-        selected_items.remove('Все')
+        selected_items = [item for item in selected_items if item != 'Все']
     return selected_items
 
 # Интерфейс фильтров с множественным выбором
