@@ -87,9 +87,10 @@ if st.sidebar.button("Сформировать карту"):
 
             centroid = geojson_data.centroid
             district_name = row["Район RU"]
+            offset = -len(district_name) * 0.002
             revenue_text = format_revenue(row["Выручка"])
             folium.map.Marker(
-                location=[centroid.y, centroid.x],
+                location=[centroid.y, centroid.x + offset],
                 icon=folium.DivIcon(html=f'<div style="font-size: 12pt; font-weight: bold; white-space: nowrap;">{district_name}: {revenue_text} USD</div>')
             ).add_to(m)
 
@@ -98,14 +99,11 @@ if st.sidebar.button("Сформировать карту"):
 
         # Отображение карты
         map_html = m._repr_html_()
-
-        # Перемещение информации о фильтрах на боксе с картой
         st.markdown("### Выбранные фильтры")
         st.markdown(f"- Группа (вид1): {', '.join(group1_selected)}")
         st.markdown(f"- Подгруппа (вид2): {', '.join(subgroup2_selected)}")
         st.markdown(f"- Подразделение1: {', '.join(department1_selected)}")
         st.markdown(f"- Подразделение2: {', '.join(department2_selected)}")
-
         st.components.v1.html(map_html, height=800)  # Увеличение высоты карты
 
     except Exception as e:
