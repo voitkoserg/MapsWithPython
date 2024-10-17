@@ -6,3 +6,4 @@ branca
 ipywidgets
 display
 openpyxl
+streamlit
