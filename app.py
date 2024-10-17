@@ -22,13 +22,13 @@ def filter_data(group1, subgroup2, department1, department2):
     filtered_data = sales_data.copy()
 
     # Применение фильтров с учетом множественного выбора
-    if group1 and 'Все' not in group1:
+    if group1:
         filtered_data = filtered_data[filtered_data['Группа (вид1)'].isin(group1)]
-    if subgroup2 and 'Все' not in subgroup2:
+    if subgroup2:
         filtered_data = filtered_data[filtered_data['Подгруппа (вид2)'].isin(subgroup2)]
-    if department1 and 'Все' not in department1:
+    if department1:
         filtered_data = filtered_data[filtered_data['Подразделение1'].isin(department1)]
-    if department2 and 'Все' not in department2:
+    if department2:
         filtered_data = filtered_data[filtered_data['Подразделение2'].isin(department2)]
 
     return filtered_data.groupby('Район', as_index=False)['Выручка'].sum()
@@ -38,19 +38,19 @@ st.sidebar.header('Фильтры')
 
 # Группа (вид1)
 group1_options = ['Все'] + sales_data['Группа (вид1)'].unique().tolist()
-group1_selected = st.sidebar.multiselect('Группа (вид1)', options=group1_options, default=[], key='group1')
+group1_selected = st.sidebar.selectbox('Группа (вид1)', options=group1_options, key='group1')
 
 # Подгруппа (вид2)
 subgroup2_options = ['Все'] + sales_data['Подгруппа (вид2)'].unique().tolist()
-subgroup2_selected = st.sidebar.multiselect('Подгруппа (вид2)', options=subgroup2_options, default=[], key='subgroup2')
+subgroup2_selected = st.sidebar.selectbox('Подгруппа (вид2)', options=subgroup2_options, key='subgroup2')
 
 # Подразделение1
 department1_options = ['Все'] + sales_data['Подразделение1'].unique().tolist()
-department1_selected = st.sidebar.multiselect('Подразделение1', options=department1_options, default=[], key='department1')
+department1_selected = st.sidebar.selectbox('Подразделение1', options=department1_options, key='department1')
 
 # Подразделение2
 department2_options = ['Все'] + sales_data['Подразделение2'].unique().tolist()
-department2_selected = st.sidebar.multiselect('Подразделение2', options=department2_options, default=[], key='department2')
+department2_selected = st.sidebar.selectbox('Подразделение2', options=department2_options, key='department2')
 
 # Кнопка для запуска формирования карты
 if st.sidebar.button("Сформировать карту"):
@@ -70,7 +70,7 @@ if st.sidebar.button("Сформировать карту"):
         colormap.caption = 'Выручка по районам (USD)'
 
         # Создание карты
-        m = folium.Map(location=[53.9, 27.5], zoom_start=7)
+        m = folium.Map(location=[53.9, 27.5], zoom_start=7, control_scale=True)
 
         # Добавление геообъектов на карту с цветовой заливкой
         for _, row in filtered_data.iterrows():
@@ -97,8 +97,15 @@ if st.sidebar.button("Сформировать карту"):
         # Добавление цветовой шкалы
         colormap.add_to(m)
 
-        # Отображение карты
-        st.components.v1.html(m._repr_html_(), height=600)
+        # Отображение карты с адаптивными размерами
+        st.components.v1.html(m._repr_html_(), height=700, width=700)
+
+        # Отображение выбранных фильтров рядом с картой
+        st.subheader("Выбранные фильтры:")
+        st.write("**Группа (вид1):**", group1_selected)
+        st.write("**Подгруппа (вид2):**", subgroup2_selected)
+        st.write("**Подразделение1:**", department1_selected)
+        st.write("**Подразделение2:**", department2_selected)
 
     except Exception as e:
         st.error(f"Произошла ошибка: {e}")
