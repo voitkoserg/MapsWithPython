@@ -3,8 +3,7 @@ import geopandas as gpd
 import folium
 from shapely import wkt
 import branca.colormap as cm
-import ipywidgets as widgets
-from IPython.display import display
+import streamlit as st
 
 # Шаг 1: Загрузка данных
 sales_data = pd.read_excel('ПродажиИюньДляКарт_Абс.xlsx')
@@ -44,30 +43,18 @@ def filter_data(group1, subgroup2, department1, department2):
     return filtered_data.groupby('Район', as_index=False)['Выручка'].sum()
 
 # Создаем виджеты для фильтрации
-group1_widget = widgets.Dropdown(options=['Все'] + sales_data['Группа (вид1)'].unique().tolist(), description='Группа (вид1):')
-subgroup2_widget = widgets.Dropdown(options=['Все'] + sales_data['Подгруппа (вид2)'].unique().tolist(), description='Подгруппа (вид2):')
-department1_widget = widgets.Dropdown(options=['Все'] + sales_data['Подразделение1'].unique().tolist(), description='Подразделение1:')
-department2_widget = widgets.Dropdown(options=['Все'] + sales_data['Подразделение2'].unique().tolist(), description='Подразделение2:')
+st.title("Фильтры для продажи")
+group1_widget = st.selectbox("Группа (вид1):", ['Все'] + sales_data['Группа (вид1)'].unique().tolist())
+subgroup2_widget = st.selectbox("Подгруппа (вид2):", ['Все'] + sales_data['Подгруппа (вид2)'].unique().tolist())
+department1_widget = st.selectbox("Подразделение1:", ['Все'] + sales_data['Подразделение1'].unique().tolist())
+department2_widget = st.selectbox("Подразделение2:", ['Все'] + sales_data['Подразделение2'].unique().tolist())
 
 # Создаем кнопку для запуска формирования карты
-generate_map_button = widgets.Button(description="Сформировать карту")
-
-# Создаем область для отображения карты
-map_output = widgets.Output()
-
-# Функция для отображения карты с отфильтрованными данными
-def update_map(button):
-    with map_output:
-        map_output.clear_output()  # Очищаем предыдущую карту
-        
-        group1 = group1_widget.value
-        subgroup2 = subgroup2_widget.value
-        department1 = department1_widget.value
-        department2 = department2_widget.value
-        
+if st.button("Сформировать карту"):
+    with st.spinner("Создание карты..."):
         # Попробуем отфильтровать данные
         try:
-            filtered_data = filter_data(group1, subgroup2, department1, department2)
+            filtered_data = filter_data(group1_widget, subgroup2_widget, department1_widget, department2_widget)
             filtered_data = filtered_data.merge(mapping_df, left_on='Район', right_on='Район RU', how='outer')
             filtered_data = filtered_data.merge(districts_data, left_on='Район BY', right_on='NL_NAME_2', how='outer')
 
@@ -114,22 +101,12 @@ def update_map(button):
             colormap.add_to(m)
 
             # Сохранение карты в HTML
-            m.save('sales_map_filtered.html')
+            map_html_file = 'sales_map_filtered.html'
+            m.save(map_html_file)
 
             # Отображение карты на экране
-            display(m)
+            st.components.v1.html(m._repr_html_(), width=700, height=600)  # Отображение карты в Streamlit
+
         except Exception as e:
-            print(f"Произошла ошибка: {e}")
+            st.error(f"Произошла ошибка: {e}")
 
-# Привязываем функцию обновления карты к нажатию кнопки
-generate_map_button.on_click(update_map)
-
-# Создаем фиксированные окна
-filter_box = widgets.VBox([group1_widget, subgroup2_widget, department1_widget, department2_widget, generate_map_button], layout=widgets.Layout(width='300px'))
-map_box = widgets.VBox([map_output], layout=widgets.Layout(height='3600px'))
-
-# Фиксация области с фильтрами и карты
-ui = widgets.HBox([filter_box, map_box])
-
-# Отображение виджетов для выбора фильтров и области для карты
-display(ui)
