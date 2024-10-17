@@ -112,4 +112,3 @@ if st.sidebar.button("Сформировать карту"):
 
     except Exception as e:
         st.error(f"Произошла ошибка: {e}")
-
