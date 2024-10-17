@@ -38,19 +38,19 @@ st.sidebar.header('Фильтры')
 
 # Группа (вид1)
 group1_options = ['Все'] + sales_data['Группа (вид1)'].unique().tolist()
-group1_selected = st.sidebar.multiselect('Группа (вид1)', options=group1_options, default=['Все'], key='group1')
+group1_selected = st.sidebar.multiselect('Группа (вид1)', options=group1_options, default=[], key='group1')
 
 # Подгруппа (вид2)
 subgroup2_options = ['Все'] + sales_data['Подгруппа (вид2)'].unique().tolist()
-subgroup2_selected = st.sidebar.multiselect('Подгруппа (вид2)', options=subgroup2_options, default=['Все'], key='subgroup2')
+subgroup2_selected = st.sidebar.multiselect('Подгруппа (вид2)', options=subgroup2_options, default=[], key='subgroup2')
 
 # Подразделение1
 department1_options = ['Все'] + sales_data['Подразделение1'].unique().tolist()
-department1_selected = st.sidebar.multiselect('Подразделение1', options=department1_options, default=['Все'], key='department1')
+department1_selected = st.sidebar.multiselect('Подразделение1', options=department1_options, default=[], key='department1')
 
 # Подразделение2
 department2_options = ['Все'] + sales_data['Подразделение2'].unique().tolist()
-department2_selected = st.sidebar.multiselect('Подразделение2', options=department2_options, default=['Все'], key='department2')
+department2_selected = st.sidebar.multiselect('Подразделение2', options=department2_options, default=[], key='department2')
 
 # Кнопка для запуска формирования карты
 if st.sidebar.button("Сформировать карту"):
@@ -70,7 +70,7 @@ if st.sidebar.button("Сформировать карту"):
         colormap.caption = 'Выручка по районам (USD)'
 
         # Создание карты
-        m = folium.Map(location=[53.9, 27.5], zoom_start=7, control_scale=True)
+        m = folium.Map(location=[53.9, 27.5], zoom_start=7)
 
         # Добавление геообъектов на карту с цветовой заливкой
         for _, row in filtered_data.iterrows():
@@ -91,20 +91,14 @@ if st.sidebar.button("Сформировать карту"):
             revenue_text = format_revenue(row["Выручка"])
             folium.map.Marker(
                 location=[centroid.y, centroid.x + offset],
-                icon=folium.DivIcon(html=f'<div style="font-size: 12pt; font-weight: bold; white-space: nowrap;">{district_name}: {revenue_text} USD</div>')
+                icon=folium.DivIcon(html=f'<div style="font-size: 6pt; font-weight: bold; white-space: nowrap;">{district_name}: {revenue_text} USD</div>')
             ).add_to(m)
 
         # Добавление цветовой шкалы
         colormap.add_to(m)
 
         # Отображение карты
-        map_html = m._repr_html_()
-        st.markdown("### Выбранные фильтры")
-        st.markdown(f"- Группа (вид1): {', '.join(group1_selected)}")
-        st.markdown(f"- Подгруппа (вид2): {', '.join(subgroup2_selected)}")
-        st.markdown(f"- Подразделение1: {', '.join(department1_selected)}")
-        st.markdown(f"- Подразделение2: {', '.join(department2_selected)}")
-        st.components.v1.html(map_html, height=800)  # Увеличение высоты карты
+        st.components.v1.html(m._repr_html_(), height=1200)  # Увеличен размер карты
 
     except Exception as e:
         st.error(f"Произошла ошибка: {e}")
