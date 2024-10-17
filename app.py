@@ -91,21 +91,14 @@ if st.sidebar.button("Сформировать карту"):
             revenue_text = format_revenue(row["Выручка"])
             folium.map.Marker(
                 location=[centroid.y, centroid.x + offset],
-                icon=folium.DivIcon(html=f'<div style="font-size: 12pt; font-weight: bold; white-space: nowrap;">{district_name}: {revenue_text} USD</div>')
+                icon=folium.DivIcon(html=f'<div style="font-size: 6pt; font-weight: bold; white-space: nowrap;">{district_name}: {revenue_text} USD</div>')
             ).add_to(m)
 
         # Добавление цветовой шкалы
         colormap.add_to(m)
 
         # Отображение карты
-        st.subheader("Карта продаж по районам")
-        st.markdown("### Фильтры:")
-        st.markdown(f"**Группа (вид1):** {', '.join(group1_selected) if group1_selected else 'Все'}")
-        st.markdown(f"**Подгруппа (вид2):** {', '.join(subgroup2_selected) if subgroup2_selected else 'Все'}")
-        st.markdown(f"**Подразделение1:** {', '.join(department1_selected) if department1_selected else 'Все'}")
-        st.markdown(f"**Подразделение2:** {', '.join(department2_selected) if department2_selected else 'Все'}")
-
-        st.components.v1.html(m._repr_html_(), height=700)
+        st.components.v1.html(m._repr_html_(), height=1200)  # Увеличен размер карты
 
     except Exception as e:
         st.error(f"Произошла ошибка: {e}")
